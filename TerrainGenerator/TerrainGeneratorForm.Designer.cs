@@ -1,6 +1,6 @@
 ﻿namespace TerrainGenerator
 {
-    partial class Form1
+    partial class TerrainGeneratorForm
     {
         /// <summary>
         /// Required designer variable.

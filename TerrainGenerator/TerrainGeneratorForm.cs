@@ -10,7 +10,7 @@ using Microsoft.DirectX.Direct3D;
 
 namespace TerrainGenerator
 {
-    public partial class Form1 : Form
+    public partial class TerrainGeneratorForm : Form
     {
         private Device device = null;
 
@@ -21,7 +21,7 @@ namespace TerrainGenerator
         private float angle = 0.0f;
 
 
-        public Form1()
+        public TerrainGeneratorForm()
         {
             this.SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.Opaque, true);
 
@@ -40,7 +40,7 @@ namespace TerrainGenerator
 
             device.VertexFormat = CustomVertex.PositionColored.Format;
             device.SetStreamSource(0, vertexBuffer, 0);
-            device.DrawPrimitives(PrimitiveType.TriangleList, 0, 1);
+            device.DrawPrimitives(PrimitiveType.TriangleList, 0, 2);
 
             device.EndScene();
 
@@ -58,7 +58,7 @@ namespace TerrainGenerator
 
             device = new Device(0, DeviceType.Hardware, this, CreateFlags.HardwareVertexProcessing, pp);
 
-            vertexBuffer = new VertexBuffer(typeof(CustomVertex.PositionColored), 3, device, Usage.WriteOnly, CustomVertex.PositionColored.Format, Pool.Default);
+            vertexBuffer = new VertexBuffer(typeof(CustomVertex.PositionColored), 6, device, Usage.Dynamic | Usage.WriteOnly, CustomVertex.PositionColored.Format, Pool.Default);
             vertexBuffer.Created += new EventHandler(this.OnVertexBufferCreate);
             OnVertexBufferCreate(vertexBuffer, null);
 
@@ -69,29 +69,41 @@ namespace TerrainGenerator
         {
             VertexBuffer butter = (VertexBuffer)sender;
 
-            vertices = new CustomVertex.PositionColored[3];
+            vertices = new CustomVertex.PositionColored[6];
 
-            vertices[0].Position = new Vector3(0, 1, 1);
-            vertices[0].Color = Color.Green.ToArgb();
+            vertices[0] = new CustomVertex.PositionColored(-1, 1, 1, Color.Blue.ToArgb());
+            vertices[1] = new CustomVertex.PositionColored(-1, -1, 1, Color.Blue.ToArgb());
+            vertices[2] = new CustomVertex.PositionColored(1, 1, 1, Color.Blue.ToArgb());
 
-            vertices[1].Position = new Vector3(-1, -1, 1);
-            vertices[1].Color = Color.Blue.ToArgb();
+            vertices[3] = new CustomVertex.PositionColored(-1, -1, 1, Color.Red.ToArgb());
+            vertices[4] = new CustomVertex.PositionColored(1, -1, 1, Color.Red.ToArgb());
+            vertices[5] = new CustomVertex.PositionColored(1, 1, 1, Color.Red.ToArgb());
 
-            vertices[2].Position = new Vector3(1, -1, 1);
-            vertices[2].Color = Color.Red.ToArgb();
+
+            vertices[0] = new CustomVertex.PositionColored(-1, 1, -1, Color.Blue.ToArgb());
+            vertices[1] = new CustomVertex.PositionColored(-1, -1, -1, Color.Blue.ToArgb());
+            vertices[2] = new CustomVertex.PositionColored(1, 1, -1, Color.Blue.ToArgb());
+
+            vertices[3] = new CustomVertex.PositionColored(-1, -1, -1, Color.Red.ToArgb());
+            vertices[4] = new CustomVertex.PositionColored(1, -1, -1, Color.Red.ToArgb());
+            vertices[5] = new CustomVertex.PositionColored(1, 1, -1, Color.Red.ToArgb());
+
+
+
 
             butter.SetData(vertices, 0, LockFlags.None);
-
         }
 
         private void SetupCamera()
         {
             device.Transform.Projection = Matrix.PerspectiveFovLH((float)Math.PI / 4, this.Width / this.Height, 1.0f, 100.0f);
-            device.Transform.View = Matrix.LookAtLH(new Vector3(0, 0, 5), new Vector3(), new Vector3(0, 1, 0));
+            device.Transform.View = Matrix.LookAtLH(new Vector3(0, 0, -5), new Vector3(), new Vector3(0, 1, 0));
 
             device.Transform.World = Matrix.RotationX(angle);
+            angle += 0.05f;
 
             device.RenderState.Lighting = false;
+            device.RenderState.CullMode = Cull.None;
         }
     }
 }
