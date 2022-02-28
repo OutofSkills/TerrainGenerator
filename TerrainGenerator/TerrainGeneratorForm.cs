@@ -25,6 +25,7 @@ namespace TerrainGenerator
         private static int verticesCount = terrainLenght * terrainLenght;
         private static int indexCount = (terrainWidth - 1) * (terrainLenght - 1) * 6;
 
+        // Camera settings
         private Vector3 cameraPosition, cameraLookAt, cameraUp;
 
         float cameraMoveSpeed = 0.2f;
@@ -43,6 +44,7 @@ namespace TerrainGenerator
 
         private bool invalidating = true;
 
+        // Vertex array
         private CustomVertex.PositionColored[] vertices = null;
 
         // Indices for the cube corners coordinates
