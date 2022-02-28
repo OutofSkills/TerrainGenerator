@@ -31,6 +31,8 @@ namespace TerrainGenerator
         float cameraTurnSpeed = 0.005f;
         float rotateY = 0;
         float tempY = 0;
+        float rotateXZ = 0;
+        float tempXZ = 0;
 
         bool isMiddleMouseDown = false;
 
@@ -128,9 +130,9 @@ namespace TerrainGenerator
 
         private void SetupCamera()
         {
-            cameraLookAt.X = (float) Math.Sin(rotateY) + cameraPosition.X;
-            cameraLookAt.Y = cameraPosition.Y - 1;
-            cameraLookAt.Z = (float)Math.Cos(rotateY) + cameraPosition.Z;
+            cameraLookAt.X = (float) Math.Sin(rotateY) + cameraPosition.X + (float) (Math.Sin(rotateXZ) * Math.Sin(rotateY));
+            cameraLookAt.Y = (float)Math.Sin(rotateXZ) + cameraPosition.Y;
+            cameraLookAt.Z = (float)Math.Cos(rotateY) + cameraPosition.Z + (float) (Math.Sin(rotateXZ) * Math.Cos(rotateY));
 
             device.Transform.Projection = Matrix.PerspectiveFovLH((float)Math.PI / 4, this.Width / this.Height, 1.0f, 100.0f);
             device.Transform.View = Matrix.LookAtLH(cameraPosition, cameraLookAt, cameraUp);
@@ -218,6 +220,18 @@ namespace TerrainGenerator
                 case Keys.E:
                     rotateY += cameraTurnSpeed;
                     break;
+                case Keys.Up:
+                    if (rotateXZ < Math.PI / 2)
+                    {
+                        rotateXZ += cameraTurnSpeed;
+                    }
+                    break;
+                case Keys.Down:
+                    if (rotateXZ > -Math.PI / 2)
+                    {
+                        rotateXZ -= cameraTurnSpeed;
+                    }
+                    break;
             }
         }
 
@@ -232,6 +246,8 @@ namespace TerrainGenerator
             {
                 case MouseButtons.Middle:
                     tempY = rotateY - e.X * cameraTurnSpeed;
+                    tempXZ = rotateXZ + e.Y * cameraTurnSpeed / 4;
+
                     isMiddleMouseDown = true;
                     break;
             }
@@ -249,8 +265,16 @@ namespace TerrainGenerator
 
         private void OnMouseMove(object sender, MouseEventArgs e)
         {
-            if(isMiddleMouseDown)
+            if (isMiddleMouseDown)
+            {
                 rotateY = tempY + e.X * cameraTurnSpeed;
+
+                float tmp = tempXZ - e.Y * cameraTurnSpeed / 4;
+                if (tmp < Math.PI / 2 && tmp > -Math.PI / 2)
+                {
+                    rotateXZ = tmp;
+                }
+            }
         }
     }
 }
