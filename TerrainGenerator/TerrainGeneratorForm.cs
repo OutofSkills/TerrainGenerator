@@ -36,6 +36,12 @@ namespace TerrainGenerator
 
         bool isMiddleMouseDown = false;
 
+        // Menu settings
+        private FillMode fillMode = FillMode.WireFrame;
+        private Color backgroundColor = Color.Black;
+
+        private bool invalidating = true;
+
         private CustomVertex.PositionColored[] vertices = null;
 
         // Indices for the cube corners coordinates
@@ -55,7 +61,7 @@ namespace TerrainGenerator
 
         private void Form1_Paint(object sender, PaintEventArgs e)
         {
-            device.Clear(ClearFlags.Target | ClearFlags.ZBuffer, Color.Black, 1, 0);
+            device.Clear(ClearFlags.Target | ClearFlags.ZBuffer, backgroundColor, 1, 0);
 
             SetupCamera();
 
@@ -71,7 +77,12 @@ namespace TerrainGenerator
 
             device.Present();
 
-            this.Invalidate();
+            menuStrip1.Update();
+
+            if (invalidating)
+            {
+                this.Invalidate();
+            }
         }
 
         private void InitializeEventHandlers()
@@ -139,7 +150,7 @@ namespace TerrainGenerator
 
             device.RenderState.Lighting = false;
             device.RenderState.CullMode = Cull.CounterClockwise;
-            device.RenderState.FillMode = FillMode.WireFrame;
+            device.RenderState.FillMode = fillMode;
         }
 
         // Used to draw a cube
@@ -251,6 +262,43 @@ namespace TerrainGenerator
                     isMiddleMouseDown = true;
                     break;
             }
+        }
+
+        private void solidToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            fillMode = FillMode.Solid;
+            solidToolStripMenuItem.Checked = true;
+            wireFrameToolStripMenuItem.Checked = false;
+            pointToolStripMenuItem.Checked = false; 
+        }
+
+        private void wireFrameToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            fillMode = FillMode.WireFrame;
+            solidToolStripMenuItem.Checked = false;
+            wireFrameToolStripMenuItem.Checked = true;
+            pointToolStripMenuItem.Checked = false;
+        }
+
+        private void pointToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            fillMode = FillMode.Point;
+            solidToolStripMenuItem.Checked = false;
+            wireFrameToolStripMenuItem.Checked = false;
+            pointToolStripMenuItem.Checked = true;
+        }
+
+        private void backgroundColorToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ColorDialog cd = new ColorDialog();
+
+            invalidating = false;
+            if(cd.ShowDialog(this) == DialogResult.OK)
+            {
+                backgroundColor = cd.Color;
+            }
+            invalidating = true;    
+            this.Invalidate();
         }
 
         private void OnMouseUp(object sender, MouseEventArgs e)
