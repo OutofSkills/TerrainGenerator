@@ -19,8 +19,8 @@ namespace TerrainGenerator
         private IndexBuffer indexBuffer = null;
 
         // Size of the terain
-        private static int terrainWidth = 25;
-        private static int terrainLenght = 25;
+        private static int terrainWidth = 257;
+        private static int terrainLenght = 257;
 
         private static int verticesCount = terrainLenght * terrainLenght;
         private static int indexCount = (terrainWidth - 1) * (terrainLenght - 1) * 6;
@@ -33,6 +33,7 @@ namespace TerrainGenerator
         float tempY = 0;
         float rotateXZ = 0;
         float tempXZ = 0;
+        float cameraLoadRange = 1000.0f;
 
         bool isMiddleMouseDown = false;
 
@@ -46,6 +47,9 @@ namespace TerrainGenerator
 
         // Indices for the cube corners coordinates
         private static int[] indices = null;
+
+        // Map that will hold our height map
+        private Bitmap heightMap = null;
 
 
         public TerrainGeneratorForm()
@@ -145,7 +149,7 @@ namespace TerrainGenerator
             cameraLookAt.Y = (float)Math.Sin(rotateXZ) + cameraPosition.Y;
             cameraLookAt.Z = (float)Math.Cos(rotateY) + cameraPosition.Z + (float) (Math.Sin(rotateXZ) * Math.Cos(rotateY));
 
-            device.Transform.Projection = Matrix.PerspectiveFovLH((float)Math.PI / 4, this.Width / this.Height, 1.0f, 100.0f);
+            device.Transform.Projection = Matrix.PerspectiveFovLH((float)Math.PI / 4, this.Width / this.Height, 1.0f, cameraLoadRange);
             device.Transform.View = Matrix.LookAtLH(cameraPosition, cameraLookAt, cameraUp);
 
             device.RenderState.Lighting = false;
@@ -203,6 +207,43 @@ namespace TerrainGenerator
                 }
             }
 
+        }
+
+        private void LoadHeightMap()
+        {
+            vertices = new CustomVertex.PositionColored[verticesCount];
+            int k = 0;
+
+            using(OpenFileDialog ofd = new OpenFileDialog())
+            {
+                ofd.Title = "Load Heightmap";
+                ofd.Filter = "Bitmap files (*.bmp)|*.bmp";
+                if(ofd.ShowDialog(this) == DialogResult.OK)
+                {
+                    heightMap = new Bitmap(ofd.FileName);
+                    Color pixelColor;
+
+                    for (int z = 0; z < terrainWidth; z++)
+                    {
+                        for (int x = 0; x < terrainLenght; x++)
+                        {
+                            if (heightMap.Size.Width > x && heightMap.Size.Height > z)
+                            {
+                                pixelColor = heightMap.GetPixel(x, z);
+
+                                vertices[k].Position = new Vector3(x, (float)pixelColor.B / 15 - 10, z);
+                                vertices[k].Color = pixelColor.ToArgb();
+                            }
+                            else
+                            {
+                                vertices[k].Position = new Vector3(x, 0, z);
+                                vertices[k].Color = Color.White.ToArgb();
+                            }
+                            k++;
+                        }
+                    }
+                }
+            }
         }
 
         private void OnKeyDown(object sender, KeyEventArgs e)
@@ -299,6 +340,18 @@ namespace TerrainGenerator
             }
             invalidating = true;    
             this.Invalidate();
+        }
+
+        private void loadHeightMapToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            LoadHeightMap();
+            vertexBuffer.SetData(vertices, 0, LockFlags.None);
+        }
+
+        private void resetToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            GenerateVertex();
+            vertexBuffer.SetData(vertices, 0, LockFlags.None);
         }
 
         private void OnMouseUp(object sender, MouseEventArgs e)

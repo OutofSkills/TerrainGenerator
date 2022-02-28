@@ -65,14 +65,16 @@
             // loadHeightMapToolStripMenuItem
             // 
             this.loadHeightMapToolStripMenuItem.Name = "loadHeightMapToolStripMenuItem";
-            this.loadHeightMapToolStripMenuItem.Size = new System.Drawing.Size(204, 26);
+            this.loadHeightMapToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
             this.loadHeightMapToolStripMenuItem.Text = "Load Heightmap";
+            this.loadHeightMapToolStripMenuItem.Click += new System.EventHandler(this.loadHeightMapToolStripMenuItem_Click);
             // 
             // resetToolStripMenuItem
             // 
             this.resetToolStripMenuItem.Name = "resetToolStripMenuItem";
-            this.resetToolStripMenuItem.Size = new System.Drawing.Size(204, 26);
+            this.resetToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
             this.resetToolStripMenuItem.Text = "Reset";
+            this.resetToolStripMenuItem.Click += new System.EventHandler(this.resetToolStripMenuItem_Click);
             // 
             // propertiesToolStripMenuItem
             // 
