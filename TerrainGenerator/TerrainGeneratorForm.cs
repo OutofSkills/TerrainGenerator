@@ -71,6 +71,7 @@ namespace TerrainGenerator
 
             vertices = new CustomVertex.PositionColored[6];
 
+            // Face side triangles
             vertices[0] = new CustomVertex.PositionColored(-1, 1, 1, Color.Blue.ToArgb());
             vertices[1] = new CustomVertex.PositionColored(-1, -1, 1, Color.Blue.ToArgb());
             vertices[2] = new CustomVertex.PositionColored(1, 1, 1, Color.Blue.ToArgb());
@@ -79,7 +80,7 @@ namespace TerrainGenerator
             vertices[4] = new CustomVertex.PositionColored(1, -1, 1, Color.Red.ToArgb());
             vertices[5] = new CustomVertex.PositionColored(1, 1, 1, Color.Red.ToArgb());
 
-
+            // Back side triangles
             vertices[0] = new CustomVertex.PositionColored(-1, 1, -1, Color.Blue.ToArgb());
             vertices[1] = new CustomVertex.PositionColored(-1, -1, -1, Color.Blue.ToArgb());
             vertices[2] = new CustomVertex.PositionColored(1, 1, -1, Color.Blue.ToArgb());
