@@ -19,8 +19,8 @@ namespace TerrainGenerator
         private IndexBuffer indexBuffer = null;
 
         // Size of the terain
-        private static int terrainWidth = 5;
-        private static int terrainLenght = 5;
+        private static int terrainWidth = 10;
+        private static int terrainLenght = 10;
 
         private static int verticesCount = terrainLenght * terrainLenght;
         private static int indexCount = (terrainWidth - 1) * (terrainLenght - 1) * 6;
